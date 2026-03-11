@@ -10,7 +10,7 @@ const CountryTable = () => {
 
   useEffect(() => {
     axios
-      .get("/api/countries") 
+      .get("http://localhost:8080/api/countries") 
       .then((res) => setCountries(res.data))
       .catch((err) => console.error("Error fetching countries:", err));
   }, []);
