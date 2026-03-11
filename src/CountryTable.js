@@ -1,29 +1,32 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-import { Table, Modal, Button, Form } from "react-bootstrap"
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Table, Modal, Button, Form } from "react-bootstrap";
 
 const CountryTable = () => {
-  const [countries, setCountries] = useState([])
-  const [search, setSearch] = useState("")
-  const [selected, setSelected] = useState(null)
-  const [showModal, setShowModal] = useState(false)
+  const [countries, setCountries] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/countries").then(res => setCountries(res.data))
-  }, [])
+    axios
+      .get("/api/countries") 
+      .then((res) => setCountries(res.data))
+      .catch((err) => console.error("Error fetching countries:", err));
+  }, []);
 
   const handleSearch = (e) => {
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
-  const filteredCountries = countries.filter(c =>
+  const filteredCountries = countries.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
-  )
+  );
 
   const openModal = (country) => {
-    setSelected(country)
-    setShowModal(true)
-  }
+    setSelected(country);
+    setShowModal(true);
+  };
 
   return (
     <div className="container mt-4">
@@ -34,7 +37,8 @@ const CountryTable = () => {
         onChange={handleSearch}
         className="mb-3"
       />
-      <Table striped bordered hover>
+
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>Flag</th>
@@ -45,9 +49,15 @@ const CountryTable = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredCountries.map(c => (
-            <tr key={c.name} onClick={() => openModal(c)} style={{cursor: "pointer"}}>
-              <td><img src={c.flag} alt={c.name} width="50"/></td>
+          {filteredCountries.map((c) => (
+            <tr
+              key={c.name}
+              onClick={() => openModal(c)}
+              style={{ cursor: "pointer" }}
+            >
+              <td>
+                <img src={c.flag} alt={c.name} width="50" />
+              </td>
               <td>{c.name}</td>
               <td>{c.capital}</td>
               <td>{c.region}</td>
@@ -63,18 +73,27 @@ const CountryTable = () => {
             <Modal.Title>{selected.name}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p><strong>Capital:</strong> {selected.capital}</p>
-            <p><strong>Region:</strong> {selected.region}</p>
-            <p><strong>Population:</strong> {selected.population.toLocaleString()}</p>
+            <p>
+              <strong>Capital:</strong> {selected.capital}
+            </p>
+            <p>
+              <strong>Region:</strong> {selected.region}
+            </p>
+            <p>
+              <strong>Population:</strong>{" "}
+              {selected.population.toLocaleString()}
+            </p>
             <img src={selected.flag} alt={selected.name} width="100%" />
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Close
+            </Button>
           </Modal.Footer>
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CountryTable
+export default CountryTable;
